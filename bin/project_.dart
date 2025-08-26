@@ -99,6 +99,30 @@ Future<void> showTodaysExpenses(int userId) async {
     print("Error: ${expRes.body}");
   }
 }
-searchExpense(userId){}
+Future<void> searchExpense(int userId) async {
+  stdout.write("Item to search: ");
+  String? keyword = stdin.readLineSync();
+
+  if (keyword == null || keyword.isEmpty) {
+    print("No keyword entered");
+    return;
+  }
+
+  final searchUrl = Uri.parse('http://localhost:3000/expenses/$userId/search?keyword=$keyword');
+  final res = await http.get(searchUrl);
+
+  if (res.statusCode == 200) {
+    final expenses = json.decode(res.body) as List;
+    if (expenses.isEmpty) {
+      print("No item: '$keyword'");
+    } else {
+      for (var e in expenses) {
+        print("${e['id']}. ${e['item']} : ${e['paid']}฿ : ${e['date']}");
+      }
+    }
+  } else {
+    print("Error: ${res.body}");
+  }
+}
 addExpense(userId){}
 deleteExpense(userId){}
