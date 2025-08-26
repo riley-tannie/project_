@@ -124,5 +124,50 @@ Future<void> searchExpense(int userId) async {
     print("Error: ${res.body}");
   }
 }
-addExpense(userId){}
-deleteExpense(userId){}
+Future<void> addExpense(int userId) async {
+
+  print("===== Add new item =====");
+  stdout.write("Item: ");
+  String? item = stdin.readLineSync();
+
+  stdout.write("Paid: ");
+  String? paid = stdin.readLineSync();
+
+  if (item == null || paid == null) {
+    print("Invalid input");
+    return;
+  }
+
+  final addUrl = Uri.parse('http://localhost:3000/expenses/$userId');
+  final res = await http.post(
+    addUrl,
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({"item": item, "paid": int.tryParse(paid) ?? 0}),
+  );
+
+  if (res.statusCode == 200) {
+    print("Inserted");
+  } else {
+    print("Error: ${res.body}");
+  }
+}
+
+Future<void> deleteExpense(int userId) async {
+  print("===== Delete new item =====");
+  stdout.write("Item id: ");
+  String? id = stdin.readLineSync();
+
+  if (id == null || id.isEmpty) {
+    print("Invalid ID");
+    return;
+  }
+
+  final delUrl = Uri.parse('http://localhost:3000/expenses/$userId/$id');
+  final res = await http.delete(delUrl);
+
+  if (res.statusCode == 200) {
+    print("Deleted!");
+  } else {
+    print("Error: ${res.body}");
+  }
+}
