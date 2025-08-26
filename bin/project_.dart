@@ -42,7 +42,7 @@ void main() async {
     print("4. Add new expense");
     print("5. Delete an expense");
     print("6. Exit");
-    stdout.write("Choose: ");
+    stdout.write("Choose one: ");
 
     String? choice = stdin.readLineSync();
 
@@ -57,10 +57,10 @@ void main() async {
     } else if (choice == "5") {
       await deleteExpense(userId);
     } else if (choice == "6") {
-      print("------ Bye -------");
+      print("------ Bye Bye -------");
       break;
     } else {
-      print("Invalid choice");
+      print("Invalid choice. Please try again");
     }
   }
 }
