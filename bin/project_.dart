@@ -104,7 +104,7 @@ Future<void> searchExpense(int userId) async {
   String? keyword = stdin.readLineSync();
 
   if (keyword == null || keyword.isEmpty) {
-    print("No keyword entered");
+    print("Why dont you enter valid words!");
     return;
   }
 
