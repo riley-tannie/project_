@@ -65,7 +65,23 @@ void main() async {
   }
 }
 
-showAllExpenses(userId){}
+Future<void> showAllExpenses(int userId) async {
+  final expUrl = Uri.parse('http://localhost:3000/expenses/$userId');
+  final expRes = await http.get(expUrl);
+
+  if (expRes.statusCode == 200) {
+    final expenses = json.decode(expRes.body) as List;
+    int total = 0;
+    print("------------- All expenses -----------");
+    for (var e in expenses) {
+      print("${e['id']}. ${e['item']} : ${e['paid']}฿ : ${e['date']}");
+      total += (e['paid'] as num).toInt();
+    }
+    print("Total expenses = $total฿");
+  } else {
+    print("Error: ${expRes.body}");
+  }
+}
 showTodaysExpenses(userId){}
 searchExpense(userId){}
 addExpense(userId){}
