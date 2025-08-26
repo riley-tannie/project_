@@ -14,54 +14,52 @@ void main() async {
     return;
   }
 
-  final loginUrl = Uri.parse('http://localhost:3000/login');
-  final loginRes = await http.post(
-    loginUrl,
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode({"username": username, "password": password}),
-  );
+  final body = {"username": username, "password": password};
+  final url = Uri.parse('http://localhost:3000/login');
+  final response = await http.post(url, body: body);
 
-  if (loginRes.statusCode != 200) {
-    print("Login failed: ${loginRes.body}");
-    return;
-  }
+  if (response.statusCode == 200) {
+    final result = jsonDecode(response.body) as Map<String, dynamic>;
+    if (result['success'] == true) {
+      print("Login successful!");
+      final int userId = result['userId'];
 
-  final loginObj = json.decode(loginRes.body) as Map<String, dynamic>;
-  if (!(loginObj['success'] ?? false)) {
-    print("Invalid credentials");
-    return;
-  }
+      while (true) {
+        print("\n========= Expense Tracking App =========");
+        print("1. Show all expenses");
+        print("2. Today's expenses");
+        print("3. Search expense");
+        print("4. Add new expense");
+        print("5. Delete an expense");
+        print("6. Exit");
+        stdout.write("Choose one: ");
 
-  final int userId = loginObj['userId'];
+        String? choice = stdin.readLineSync();
 
-  while (true) {
-    print("\n========= Expense Tracking App =========");
-    print("1. Show all expenses");
-    print("2. Today's expenses");
-    print("3. Search expense");
-    print("4. Add new expense");
-    print("5. Delete an expense");
-    print("6. Exit");
-    stdout.write("Choose one: ");
-
-    String? choice = stdin.readLineSync();
-
-    if (choice == "1") {
-      await showAllExpenses(userId);
-    } else if (choice == "2") {
-      await showTodaysExpenses(userId);
-    } else if (choice == "3") {
-      await searchExpense(userId);
-    } else if (choice == "4") {
-      await addExpense(userId);
-    } else if (choice == "5") {
-      await deleteExpense(userId);
-    } else if (choice == "6") {
-      print("------ Bye Bye -------");
-      break;
+        if (choice == "1") {
+          await showAllExpenses(userId);
+        } else if (choice == "2") {
+          await showTodaysExpenses(userId);
+        } else if (choice == "3") {
+          await searchExpense(userId);
+        } else if (choice == "4") {
+          await addExpense(userId);
+        } else if (choice == "5") {
+          await deleteExpense(userId);
+        } else if (choice == "6") {
+          print("------ Bye Bye -------");
+          break;
+        } else {
+          print("Invalid choice. Please try again");
+        }
+      }
     } else {
-      print("Invalid choice. Please try again");
+      print("Invalid credentials");
     }
+  } else if (response.statusCode == 401 || response.statusCode == 500) {
+    print("Login failed: ${response.body}");
+  } else {
+    print("Unknown error");
   }
 }
 
