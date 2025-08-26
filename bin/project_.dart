@@ -82,7 +82,23 @@ Future<void> showAllExpenses(int userId) async {
     print("Error: ${expRes.body}");
   }
 }
-showTodaysExpenses(userId){}
+Future<void> showTodaysExpenses(int userId) async {
+  final expUrl = Uri.parse('http://localhost:3000/expenses/$userId/today');
+  final expRes = await http.get(expUrl);
+
+  if (expRes.statusCode == 200) {
+    final expenses = json.decode(expRes.body) as List;
+    int total = 0;
+    print("------------- Today's expenses -----------");
+    for (var e in expenses) {
+      print("${e['id']}. ${e['item']} : ${e['paid']}฿ : ${e['date']}");
+      total += (e['paid'] as num).toInt();
+    }
+    print("Total expenses = $total฿");
+  } else {
+    print("Error: ${expRes.body}");
+  }
+}
 searchExpense(userId){}
 addExpense(userId){}
 deleteExpense(userId){}
